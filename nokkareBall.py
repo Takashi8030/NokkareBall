@@ -62,6 +62,12 @@ while running:
         force = 1000 * direction.normalized()
         ball.apply_force_at_local_point(force, (0, 0))
 
+        if ball.position.x < 0 or ball.position.x > width or ball.position.y < 0 or ball.position.y > height:
+            # Remove the ball from the space
+            space.remove(ball, ball.shapes[0])
+            # Remove the ball from the balls list
+            balls.remove(ball)
+
     # Step the physics simulation
     space.step(1 / 60.0)
 
