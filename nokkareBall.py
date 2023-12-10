@@ -4,11 +4,15 @@ import pymunk
 import pymunk.pygame_util
 import random
 
+from statics import width, height
+from player1 import action_ball_1
+from player2 import action_ball_2
+from player3 import action_ball_3
+
 # Initialize Pygame
 pygame.init()
 
 # Set up the window
-width, height = 1000, 1000
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Bouncing Balls Simulation")
 
@@ -58,10 +62,13 @@ while running:
             running = False
 
     # Make balls move toward the center of the stage
-    for ball in balls:
-        direction = pymunk.Vec2d(width // 2, height // 2) - ball.position
-        force = 1000 * direction.normalized()
-        ball.apply_force_at_local_point(force, (0, 0))
+    for i, ball in enumerate(balls):
+        if i == 0:
+            action_ball_1(ball)
+        elif i == 1:
+            action_ball_2(ball)
+        elif i == 2:
+            action_ball_3(ball)
 
     # Step the physics simulation
     space.step(1 / 60.0)
