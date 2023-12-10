@@ -19,6 +19,7 @@ space.gravity = (0, 0)  # Disable gravity
 # Create balls
 num_balls = 3
 balls = []
+ball_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # Set colors for the balls
 
 for _ in range(num_balls):
     ball_mass = 10
@@ -72,8 +73,8 @@ while running:
     pygame.draw.circle(screen, (0, 0, 255), (width/2, height/2), 250, 2)
 
     # Draw the balls
-    for ball in balls:
-        pygame.draw.circle(screen, (255, 0, 0), (int(ball.position.x), int(ball.position.y)), ball_radius)
+    for i, ball in enumerate(balls):
+        pygame.draw.circle(screen, ball_colors[i], (int(ball.position.x), int(ball.position.y)), ball_radius)
 
     # Update the screen
     pygame.display.flip()
