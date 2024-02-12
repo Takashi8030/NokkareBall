@@ -42,6 +42,11 @@ for _ in range(num_balls):
     ball_shape.elasticity = 0.95
     space.add(ball_body, ball_shape)
     balls.append(ball_body)
+    ball_body.shape = ball_shape  # Set the shape attribute for the ball
+
+# Define stage boundaries
+stage_center = pymunk.Vec2d(width/2, height/2)
+stage_radius = 250
 
 # Create Pygame clock
 clock = pygame.time.Clock()
@@ -61,30 +66,27 @@ while running:
         if event.type == QUIT:
             running = False
 
-    # Make balls move toward the center of the stage
-    for i, ball in enumerate(balls[:]):  # Copy the list to iterate safely
+    for ball in balls[:]:  # Copy the list to iterate safely
+        # Check if the ball is outside the stage circular area
+        ball_position = pymunk.Vec2d(ball.position.x, ball.position.y)
+        distance_from_center = (ball_position - stage_center).length
+        if distance_from_center > stage_radius:
+            try:
+                # Remove the ball from the space and the balls list
+                space.remove(ball, ball.shape)  # Ensure ball.shape is correctly assigned when creating the ball
+                balls.remove(ball)
+            except Exception as e:
+                print(f"Error removing ball: {e}")
+            continue  # Skip the rest of the loop for this ball
+
+        # Apply actions based on the ball's index
+        i = balls.index(ball)
         if i == 0:
             action_ball_1(ball)
         elif i == 1:
             action_ball_2(ball)
         elif i == 2:
             action_ball_3(ball)
-
-        # Calculate the distance from the center of the stage
-        distance_from_center = (pymunk.Vec2d(ball.position.x - width / 2, ball.position.y - height / 2)).length
-
-        # If the distance is greater than 250, move the ball to the top-left corner of the screen
-        if distance_from_center > 250:
-            ball.position = pymunk.Vec2d(20, 20)  # Move the ball to the top-left corner
-
-        # If the distance is greater than 250, but the ball is still outside the stage, bring it back inside
-        if distance_from_center > 250:
-            if ball.position.x < 0 or ball.position.x > width or ball.position.y < 0 or ball.position.y > height:
-                # Move the ball to a random position within the stage
-                ball.position = pymunk.Vec2d(
-                    width // 2 + random.uniform(-30, 30),
-                    height // 2 + random.uniform(-30, 30)
-                )
 
     # Step the physics simulation
     space.step(1 / 60.0)
@@ -95,8 +97,8 @@ while running:
     # Draw the stage
     pygame.draw.circle(screen, (0, 0, 255), (width/2, height/2), 250, 2)
 
-    # Draw the balls
-    for i, ball in enumerate(balls):   # Now we iterate over the modified list
+    # Draw the balls with their original colors
+    for i, ball in enumerate(balls):
         pygame.draw.circle(screen, ball_colors[i], (int(ball.position.x), int(ball.position.y)), ball_radius)
 
     # Update the screen
