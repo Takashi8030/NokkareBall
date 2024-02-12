@@ -3,6 +3,7 @@ from pygame.locals import QUIT
 import pymunk
 import pymunk.pygame_util
 import random
+import time
 
 from statics import width, height
 from player1 import action_ball_1
@@ -55,11 +56,27 @@ def ball_stage_collision(arbiter, space, data):
 space.add_collision_handler(0, 1).begin = ball_stage_collision
 
 # Main loop
+game_start_effect = time.time()
 running = True
-while running:
+while True:
+    # Clear the screen
+    screen.fill((255, 255, 255))
+
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
+    
+    if game_start_effect:
+        countdown = max(0, 3 - (time.time() - game_start_effect))
+        if countdown == 0:
+            game_start_effect = None
+        else:
+            font = pygame.font.Font(None, 74)
+            text = font.render(str(int(countdown) + 1), True, (255, 0, 0))
+            text_rect = text.get_rect(center=(width / 2, height / 2))
+            screen.blit(text, text_rect)
+            pygame.display.flip()
+            continue
 
     # Make balls move toward the center of the stage
     for i, ball in enumerate(balls):
@@ -73,9 +90,6 @@ while running:
     # Step the physics simulation
     space.step(1 / 60.0)
 
-    # Clear the screen
-    screen.fill((255, 255, 255))
-
     # Draw the stage
     pygame.draw.circle(screen, (0, 0, 255), (width/2, height/2), 250, 2)
 
@@ -88,6 +102,9 @@ while running:
 
     # Control the clock
     clock.tick(60)
+
+    if not running:
+        break
 
 # Quit Pygame
 pygame.quit()
