@@ -26,7 +26,7 @@ num_balls = 3
 balls = []
 ball_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # Set colors for the balls
 
-for _ in range(num_balls):
+for i in range(num_balls):
     ball_mass = 10
     ball_radius = 20
     ball_moment = pymunk.moment_for_circle(ball_mass, 0, ball_radius)
@@ -39,10 +39,16 @@ for _ in range(num_balls):
     
     ball_body = pymunk.Body(ball_mass, ball_moment)
     ball_body.position = ball_initial_position
+    ball_body.color = ball_colors[i]
     ball_shape = pymunk.Circle(ball_body, ball_radius)
     ball_shape.elasticity = 0.95
     space.add(ball_body, ball_shape)
     balls.append(ball_body)
+    ball_body.shape = ball_shape  # Set the shape attribute for the ball
+
+# Define stage boundaries
+stage_center = pymunk.Vec2d(width/2, height/2)
+stage_radius = 250
 
 # Create Pygame clock
 clock = pygame.time.Clock()
@@ -78,8 +84,21 @@ while True:
             pygame.display.flip()
             continue
 
-    # Make balls move toward the center of the stage
-    for i, ball in enumerate(balls):
+    for ball in balls[:]:  # Copy the list to iterate safely
+        # Check if the ball is outside the stage circular area
+        ball_position = pymunk.Vec2d(ball.position.x, ball.position.y)
+        distance_from_center = (ball_position - stage_center).length
+        if distance_from_center > stage_radius:
+            try:
+                # Remove the ball from the space and the balls list
+                space.remove(ball, ball.shape)  # Ensure ball.shape is correctly assigned when creating the ball
+                balls.remove(ball)
+            except Exception as e:
+                print(f"Error removing ball: {e}")
+            continue  # Skip the rest of the loop for this ball
+
+        # Apply actions based on the ball's index
+        i = balls.index(ball)
         if i == 0:
             action_ball_1(ball)
         elif i == 1:
@@ -93,9 +112,9 @@ while True:
     # Draw the stage
     pygame.draw.circle(screen, (0, 0, 255), (width/2, height/2), 250, 2)
 
-    # Draw the balls
+    # Draw the balls with their original colors
     for i, ball in enumerate(balls):
-        pygame.draw.circle(screen, ball_colors[i], (int(ball.position.x), int(ball.position.y)), ball_radius)
+        pygame.draw.circle(screen, ball.color, (int(ball.position.x), int(ball.position.y)), ball_radius)
 
     # Update the screen
     pygame.display.flip()
