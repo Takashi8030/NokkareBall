@@ -25,7 +25,7 @@ num_balls = 3
 balls = []
 ball_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # Set colors for the balls
 
-for _ in range(num_balls):
+for i in range(num_balls):
     ball_mass = 10
     ball_radius = 20
     ball_moment = pymunk.moment_for_circle(ball_mass, 0, ball_radius)
@@ -38,6 +38,7 @@ for _ in range(num_balls):
     
     ball_body = pymunk.Body(ball_mass, ball_moment)
     ball_body.position = ball_initial_position
+    ball_body.color = ball_colors[i]
     ball_shape = pymunk.Circle(ball_body, ball_radius)
     ball_shape.elasticity = 0.95
     space.add(ball_body, ball_shape)
@@ -99,7 +100,7 @@ while running:
 
     # Draw the balls with their original colors
     for i, ball in enumerate(balls):
-        pygame.draw.circle(screen, ball_colors[i], (int(ball.position.x), int(ball.position.y)), ball_radius)
+        pygame.draw.circle(screen, ball.color, (int(ball.position.x), int(ball.position.y)), ball_radius)
 
     # Update the screen
     pygame.display.flip()
