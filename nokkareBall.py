@@ -55,11 +55,22 @@ def ball_stage_collision(arbiter, space, data):
 space.add_collision_handler(0, 1).begin = ball_stage_collision
 
 # Main loop
+selected_ball = None
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            for ball in balls:
+                if (ball.position - pymunk.Vec2d(*event.pos)).length < ball_radius:
+                    selected_ball = ball
+                    break
+        elif event.type == pygame.MOUSEBUTTONUP:
+            selected_ball = None
+        elif event.type == pygame.MOUSEMOTION:
+            if selected_ball is not None:
+                selected_ball.position = pymunk.Vec2d(*event.pos)
 
     # Make balls move toward the center of the stage
     for i, ball in enumerate(balls):
