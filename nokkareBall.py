@@ -62,13 +62,21 @@ while running:
             running = False
 
     # Make balls move toward the center of the stage
-    for i, ball in enumerate(balls):
+    for i, ball in enumerate(balls[:]):  # Copy the list to iterate safely
         if i == 0:
             action_ball_1(ball)
         elif i == 1:
             action_ball_2(ball)
         elif i == 2:
             action_ball_3(ball)
+
+        # Calculate the distance from the center of the stage
+        distance_from_center = (pymunk.Vec2d(ball.position.x - width / 2, ball.position.y - height / 2)).length
+
+        # If the distance is greater than 250, remove the ball
+        if distance_from_center > 250:
+            space.remove(ball, ball.shapes[0])  # Remove the ball from the space
+            balls.remove(ball)  # Remove the ball from the balls list
 
     # Step the physics simulation
     space.step(1 / 60.0)
@@ -80,7 +88,7 @@ while running:
     pygame.draw.circle(screen, (0, 0, 255), (width/2, height/2), 250, 2)
 
     # Draw the balls
-    for i, ball in enumerate(balls):
+    for i, ball in enumerate(balls):   # Now we iterate over the modified list
         pygame.draw.circle(screen, ball_colors[i], (int(ball.position.x), int(ball.position.y)), ball_radius)
 
     # Update the screen
