@@ -73,10 +73,18 @@ while running:
         # Calculate the distance from the center of the stage
         distance_from_center = (pymunk.Vec2d(ball.position.x - width / 2, ball.position.y - height / 2)).length
 
-        # If the distance is greater than 250, remove the ball
+        # If the distance is greater than 250, move the ball to the top-left corner of the screen
         if distance_from_center > 250:
-            space.remove(ball, ball.shapes[0])  # Remove the ball from the space
-            balls.remove(ball)  # Remove the ball from the balls list
+            ball.position = pymunk.Vec2d(20, 20)  # Move the ball to the top-left corner
+
+        # If the distance is greater than 250, but the ball is still outside the stage, bring it back inside
+        if distance_from_center > 250:
+            if ball.position.x < 0 or ball.position.x > width or ball.position.y < 0 or ball.position.y > height:
+                # Move the ball to a random position within the stage
+                ball.position = pymunk.Vec2d(
+                    width // 2 + random.uniform(-30, 30),
+                    height // 2 + random.uniform(-30, 30)
+                )
 
     # Step the physics simulation
     space.step(1 / 60.0)
