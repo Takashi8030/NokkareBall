@@ -113,9 +113,9 @@ while True:
         if i == 0:
             action_ball_1(ball)
         elif i == 1:
-            action_ball_2(ball)
+            action_ball_2(ball, space, stage_center, stage_radius)
         elif i == 2:
-            action_ball_3(ball)
+            action_ball_3(ball, space, stage_center, stage_radius)
 
     # Step the physics simulation
     space.step(1 / 60.0)
