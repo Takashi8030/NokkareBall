@@ -25,6 +25,8 @@ space.gravity = (0, 0)  # Disable gravity
 num_balls = 3
 balls = []
 ball_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # Set colors for the balls
+action_functions = [action_ball_1, action_ball_2, action_ball_3]
+
 
 for i in range(num_balls):
     ball_mass = 10
@@ -45,6 +47,8 @@ for i in range(num_balls):
     space.add(ball_body, ball_shape)
     balls.append(ball_body)
     ball_body.shape = ball_shape  # Set the shape attribute for the ball
+    ball_body.action = action_functions[i]  # Assign the corresponding action function
+
 
 # Define stage boundaries
 stage_center = pymunk.Vec2d(width/2, height/2)
