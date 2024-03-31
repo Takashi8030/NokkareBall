@@ -33,8 +33,8 @@ for i in range(num_balls):
     
     # Ensure each ball has a unique initial position
     ball_initial_position = pymunk.Vec2d(
-        width // 2 + random.uniform(-30, 30),
-        height // 2 + random.uniform(-30, 30)
+        width // 2 + random.uniform(-200, 200),
+        height // 2 + random.uniform(-200, 200)
     )
     
     ball_body = pymunk.Body(ball_mass, ball_moment)
